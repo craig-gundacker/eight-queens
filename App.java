@@ -15,6 +15,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /*
@@ -28,9 +32,9 @@ public class App extends Application
     private final static int NUM_QUEENS = 8;
     private final static int START_X = 3;
     private final static int START_Y = 4;
-    private final static SecureRandom rnd = new SecureRandom();
-    private final static TextArea taSimResults = new TextArea();        
-    private final static VBox vbGameBoard = new VBox(10); //Pane for chessboards
+    private final static SecureRandom RND = new SecureRandom();
+    private final static TextArea TA_SIM_RESULTS = new TextArea();        
+    private final static VBox VB_GAME_BOARD = new VBox(10); //Pane for chessboards
     private static int simulationNum = 0;
     
     @Override
@@ -70,24 +74,24 @@ public class App extends Application
             }
         });
                  
-        taSimResults.setEditable(false);
-        taSimResults.setMinHeight(BOARD_DIM * .75);
+        TA_SIM_RESULTS.setEditable(false);
+        TA_SIM_RESULTS.setMinHeight(BOARD_DIM * .75);
         
         VBox vbForm = new VBox(10);
         vbForm.setAlignment(Pos.TOP_CENTER);
         vbForm.setPadding(new Insets(10, 10, 10, 10));
         vbForm.getChildren().addAll(new Label("Select Mode"), rbFixed, rbRandom, 
-                                    btnGo, taSimResults);
+                                    btnGo, TA_SIM_RESULTS);
         return vbForm;
     }
     
     private Node createSimPane()
     {
-        vbGameBoard.setAlignment(Pos.CENTER);
-        vbGameBoard.setPadding(new Insets(10, 10, 10, 0));
+        VB_GAME_BOARD.setAlignment(Pos.CENTER);
+        VB_GAME_BOARD.setPadding(new Insets(10, 10, 10, 0));
         
         ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(vbGameBoard);
+        scrollPane.setContent(VB_GAME_BOARD);
         scrollPane.setMinSize(BOARD_DIM, BOARD_DIM); 
         
         return scrollPane;
@@ -106,8 +110,8 @@ public class App extends Application
         int startY;
         if (randomSim)
         {
-            startX = rnd.nextInt(NUM_QUEENS);
-            startY = rnd.nextInt(NUM_QUEENS);
+            startX = RND.nextInt(NUM_QUEENS);
+            startY = RND.nextInt(NUM_QUEENS);
         }
         else
         {
@@ -118,24 +122,25 @@ public class App extends Application
         int numAttempts = 1;
         boolean solutionFound = false;
         simulationNum++;
-        taSimResults.appendText("Simulation " + simulationNum+"\n");
-        taSimResults.appendText("Searching for solution...\n\n");
+        TA_SIM_RESULTS.appendText("Simulation " + simulationNum+"\n");
+        TA_SIM_RESULTS.setFont(Font.getDefault());
+        TA_SIM_RESULTS.appendText("Searching for solution...\n\n");
         while (!solutionFound)
         {
-            taSimResults.appendText("Attempt: " + numAttempts+"\n");
+            TA_SIM_RESULTS.appendText("Attempt: " + numAttempts+"\n");
             try
             {
                 GameBoard gameBoard = new GameBoard(SQUARES_PER_SIDE, BOARD_DIM, randomSim);
                 gameBoard.setUpBoard();
                 gameBoard.checkSquareSafety(startX, startY, NUM_QUEENS);
                 solutionFound = true; //base case reached
-                taSimResults.appendText("Attempt " + numAttempts + " succeeded\n\n");
+                TA_SIM_RESULTS.appendText("Attempt " + numAttempts + " succeeded\n\n");
                 String simNum = "Simulation" + String.valueOf(simulationNum);
-                vbGameBoard.getChildren().addAll(new Label(simNum),gameBoard);
+                VB_GAME_BOARD.getChildren().addAll(new Label(simNum),gameBoard);
             }
             catch (NullPointerException ex)
             {
-                taSimResults.appendText("Attempt " + numAttempts + " failed\n\n");
+                TA_SIM_RESULTS.appendText("Attempt " + numAttempts + " failed\n\n");
                 numAttempts++;
             }
         }
